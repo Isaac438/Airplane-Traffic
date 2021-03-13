@@ -30,7 +30,7 @@ function setup() {
   }
   heart.updatePixels();
 
-  player = new Player(3, 4, 10);
+  player = new Player(3, 3, 10);
   enemies = [];
 
 }
