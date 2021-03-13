@@ -30,9 +30,9 @@ function setup() {
   }
   heart.updatePixels();
 
-  player = new Player(3, 3, 10);
+  player = new Player(3, 4, 10);
   enemies = [];
-  
+
 }
 
 
@@ -46,7 +46,7 @@ class Player {
   draw(x) {
     draw_plane(this.size, x - this.size * 6, height - (12 * this.size + 20));
     for (let i = 0; i < this.lives; i++) {
-      draw_heart(i * 25 + 5, 5); 
+      draw_heart(i * 25 + 5, 5);
     }
     for (let i = 0; i < this.lasers; i++) {
       fill(0,250,0);
@@ -190,7 +190,7 @@ function draw() {
       background(102, 0, 0);
       player.draw(mouseX);
       draw_text('Score: ' + score, 25, 255, width - 150, height - 25);
-      for(let i = 0; i < enemies.length; i++) {     
+      for(let i = 0; i < enemies.length; i++) {
         if (enemies[i].y > height + 108) {
           enemies.splice(i, 1);
           score++;
