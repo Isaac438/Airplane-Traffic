@@ -198,7 +198,7 @@ function draw() {
           enemies[i].draw();
         }
       }
-      let create_new_enemy = randInt(1,75);
+      let create_new_enemy = randInt(1,60);
       if (create_new_enemy == 6) {
         enemies.push(new Enemy());
       }
