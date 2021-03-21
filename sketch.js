@@ -32,6 +32,7 @@ function setup() {
 
   player = new Player(3, 3, 10);
   enemies = [];
+  lasers = [];
 
 }
 
@@ -57,6 +58,27 @@ class Player {
 
 }
 
+class Laser {
+  constructor(x,y,w,h) {
+    this.y = y;
+    this.x = x;
+    this.color = 'green';
+    this.h = h;
+    this.w = w;
+  }
+
+  draw() {
+    fill(this.color);
+    rect(this.x,this.y,this.w,this.h);
+    this.y -= 2;
+  }
+
+  getBounds() {
+    return { x: this.x - this.w, y: this.y - this.h, w: this.w, h: this.h };
+  }
+
+}
+
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -64,15 +86,21 @@ function randInt(min, max) {
 class Enemy {
   constructor() {
     this.size = 9;
-    this.x = randInt(this.size * 9, width - this.size * 9);
+    this.width = this.size * 12;
+    this.height = this.size * 12;
+    this.x = randInt(this.width, width - this.width);
     this.color = 'red';
-    this.y = -this.size * 12;
+    this.y = -this.height;
     this.speed = randInt(30, 50) / 10;
   }
 
   draw() {
     this.y += this.speed;
     draw_plane(this.size, this.x, this.y, this.color, false);
+  }
+
+  getBounds() {
+    return { x: this.x - this.width, y: this.y - this.height, w: this.width, h: this.height };
   }
 
 }
@@ -187,27 +215,52 @@ function draw() {
       how_to_play();
       break;
     case 2: // playing the game
+
+      // clear the screen
       background(102, 0, 0);
+
+      // Draw the player
       player.draw(mouseX);
+
+      // Draw the Score
       draw_text('Score: ' + score, 25, 255, width - 150, height - 25);
+
+      // Draw the enemies
       for(let i = 0; i < enemies.length; i++) {
         if (enemies[i].y > height + 108) {
           enemies.splice(i, 1);
           score++;
         } else {
           enemies[i].draw();
+          let b = enemies[i].getBounds();
+          fill(0, 0, 0, 0);
+          rect(b.x, b.y, b.w, b.h);
         }
       }
+
+      // Draw the lasers
+      for(let i = 0; i < lasers.length; i++) {
+        lasers[i].draw();
+      }
+
       let create_new_enemy = randInt(1,60);
       if (create_new_enemy == 6) {
         enemies.push(new Enemy());
       }
+
+
       break;
     case 3: // game over
       game_over();
       break;
   }
 
+}
+
+function keyPressed() {
+  if (keyCode === 32) {
+    lasers.push(new Laser(20,450,5,25));
+  }
 }
 
 function mouseReleased() {
