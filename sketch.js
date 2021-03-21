@@ -1,5 +1,6 @@
 let screen = 0;
 let score = 0;
+let player;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -42,10 +43,13 @@ class Player {
     this.lives = lives;
     this.lasers = lasers;
     this.size = size;
+    this.x = 0;
+    this.y = height - (12 * this.size + 20);
   }
 
   draw(x) {
-    draw_plane(this.size, x - this.size * 6, height - (12 * this.size + 20));
+    this.x = x;
+    draw_plane(this.size, x - this.size * 6, this.y);
     for (let i = 0; i < this.lives; i++) {
       draw_heart(i * 25 + 5, 5);
     }
@@ -68,9 +72,11 @@ class Laser {
   }
 
   draw() {
+    noStroke();
     fill(this.color);
     rect(this.x,this.y,this.w,this.h);
-    this.y -= 2;
+    this.y -= 6;
+    stroke(0);
   }
 
   getBounds() {
@@ -232,15 +238,16 @@ function draw() {
           score++;
         } else {
           enemies[i].draw();
-          let b = enemies[i].getBounds();
-          fill(0, 0, 0, 0);
-          rect(b.x, b.y, b.w, b.h);
         }
       }
 
       // Draw the lasers
       for(let i = 0; i < lasers.length; i++) {
-        lasers[i].draw();
+        if (lasers[i].y < -15) {
+          lasers.splice(i, 1);
+        } else {
+          lasers[i].draw();
+        }
       }
 
       let create_new_enemy = randInt(1,60);
@@ -259,7 +266,7 @@ function draw() {
 
 function keyPressed() {
   if (keyCode === 32) {
-    lasers.push(new Laser(20,450,5,25));
+    lasers.push(new Laser(player.x - 3, player.y - 20, 5, 25));
   }
 }
 
