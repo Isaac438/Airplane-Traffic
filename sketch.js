@@ -74,13 +74,13 @@ class Laser {
   draw() {
     noStroke();
     fill(this.color);
-    rect(this.x,this.y,this.w,this.h);
+    rect(this.x, this.y, this.w, this.h);
     this.y -= 6;
     stroke(0);
   }
 
   getBounds() {
-    return { x: this.x - this.w, y: this.y - this.h, w: this.w, h: this.h };
+    return { x: this.x, y: this.y, w: this.w, h: this.h };
   }
 
 }
@@ -92,11 +92,11 @@ function randInt(min, max) {
 class Enemy {
   constructor() {
     this.size = 9;
-    this.width = this.size * 12;
-    this.height = this.size * 12;
-    this.x = randInt(this.width, width - this.width);
+    this.w = this.size * 12;
+    this.h = this.size * 12;
+    this.x = randInt(this.w, width - this.w);
     this.color = 'red';
-    this.y = -this.height;
+    this.y = -this.h;
     this.speed = randInt(30, 50) / 10;
   }
 
@@ -106,14 +106,15 @@ class Enemy {
   }
 
   getBounds() {
-    return { x: this.x - this.width, y: this.y - this.height, w: this.width, h: this.height };
+    return { x: this.x - this.w, y: this.y - this.h, w: this.w, h: this.h };
   }
 
   isTouching(bounds) {
-    if(this.y + this.h <= bounds.y || bounds.y + bounds.h <= this.y) {
+    let b = this.getBounds();
+    if(b.y + b.h <= bounds.y || bounds.y + bounds.h <= b.y) {
       return false;
     }
-    if(this.x + this.w <= bounds.x || bounds.x + bounds.w <= this.x) {
+    if(b.x + b.w <= bounds.x || bounds.x + bounds.w <= b.x) {
       return false;
     }
     return true;
@@ -247,7 +248,22 @@ function draw() {
           enemies.splice(i, 1);
           score++;
         } else {
+          let b = enemies[i].getBounds();
+          noFill();
+          rect(b.x, b.y, b.w, b.h);
           enemies[i].draw();
+        }
+      }
+
+      //  Check for enemies being hit by lasers
+      for(let i = 0; i < enemies.length; i++) {
+        for(let j = 0; j < lasers.length; j++) {
+          if (enemies[i].isTouching(lasers[j].getBounds())) {
+            console.log("HIT!");
+            enemies.splice(i, 1);
+            score++;
+            lasers.splice(i, 1);
+          }
         }
       }
 
@@ -256,6 +272,9 @@ function draw() {
         if (lasers[i].y < -15) {
           lasers.splice(i, 1);
         } else {
+          let b = lasers[i].getBounds();
+          noFill();
+          rect(b.x, b.y, b.w, b.h);
           lasers[i].draw();
         }
       }
