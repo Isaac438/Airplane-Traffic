@@ -1,6 +1,8 @@
 let screen = 0;
 let score = 0;
 let player;
+let laserz = 3;
+let laserShot = false;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -161,7 +163,7 @@ function game_over() {
 
   textSize(150);
   fill(255, 0, 0);
-  text('Game Over', width / 2, 350);
+  text('You`re Dead!', width / 2, 350);
 
   textSize(25);
   fill(206, 212, 36);
@@ -241,6 +243,7 @@ function draw() {
 
       // Draw the Score
       draw_text('Score: ' + score, 25, 255, width - 150, height - 25);
+      //draw_text('Laser Shot: ' + laserShot, 20, 'yellow', 10, height - 50);
 
       // Draw the enemies
       for(let i = 0; i < enemies.length; i++) {
@@ -249,8 +252,6 @@ function draw() {
           score++;
         } else {
           let b = enemies[i].getBounds();
-          noFill();
-          rect(b.x, b.y, b.w, b.h);
           enemies[i].draw();
         }
       }
@@ -258,10 +259,10 @@ function draw() {
       //  Check for enemies being hit by lasers
       for(let i = 0; i < enemies.length; i++) {
         for(let j = 0; j < lasers.length; j++) {
-          if (enemies[i].isTouching(lasers[j].getBounds())) {
-            console.log("HIT!");
+          if (enemies[i] !== undefined && enemies[i].isTouching(lasers[j].getBounds())) {
             enemies.splice(i, 1);
-            score++;
+            score += 2;
+            laserz--;
             lasers.splice(i, 1);
           }
         }
@@ -279,11 +280,10 @@ function draw() {
         }
       }
 
-      let create_new_enemy = randInt(1,60);
+      let create_new_enemy = randInt(1,80);
       if (create_new_enemy == 6) {
         enemies.push(new Enemy());
       }
-
 
       break;
     case 3: // game over
@@ -294,9 +294,15 @@ function draw() {
 }
 
 function keyPressed() {
-  if (keyCode === 32) {
+  if ((keyCode === 32) && (!laserShot) && (player.lasers > 0) && (screen == 2)) {
+    laserShot = true;
     lasers.push(new Laser(player.x - 3, player.y - 20, 5, 25));
+    player.lasers--;
   }
+}
+
+function keyReleased() {
+    laserShot = false;
 }
 
 function mouseReleased() {
