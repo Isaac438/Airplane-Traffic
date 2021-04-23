@@ -1,7 +1,6 @@
 let screen = 0;
 let score = 0;
 let player;
-let laserz = 3;
 let laserShot = false;
 
 function setup() {
@@ -287,7 +286,7 @@ function draw() {
           if (enemies[i] !== undefined && enemies[i].isTouching(lasers[j].getBounds())) {
             enemies.splice(i, 1);
             score += 2;
-            laserz--;
+            player.lasers--;
             lasers.splice(i, 1);
           }
         }
@@ -350,6 +349,5 @@ function mouseReleased() {
     player.lives = 3;
     score = 0;
     player.lasers = 3;
-    laserz = 3;
   }
 }
