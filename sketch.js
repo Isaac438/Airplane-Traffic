@@ -350,5 +350,6 @@ function mouseReleased() {
     player.lives = 3;
     score = 0;
     player.lasers = 3;
+    laserz = 3;
   }
 }
