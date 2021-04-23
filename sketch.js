@@ -47,9 +47,16 @@ class Player {
     this.size = size;
     this.x = 0;
     this.y = height - (12 * this.size + 20);
+    this.w = this.size * 12;
+    this.h = this.size * 12;
+  }
+
+  getBounds() {
+    return { x: this.x - this.w / 2, y: this.y, w: this.w, h: this.h };
   }
 
   draw(x) {
+    fill(255);
     this.x = x;
     draw_plane(this.size, x - this.size * 6, this.y);
     for (let i = 0; i < this.lives; i++) {
@@ -124,6 +131,21 @@ class Enemy {
 
 }
 
+class Explosion {
+  constructor(x, y, size) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.currentsize = 0;
+    this.color = 'red';
+  }
+
+  draw() {
+    fill(this.color);
+    circle(this.x, this.y, this.currentsize);
+  }
+}
+
 function draw_plane(a, x, y, color = 255, facingUp = true) {
   push();
   fill(color);
@@ -168,6 +190,8 @@ function game_over() {
   textSize(25);
   fill(206, 212, 36);
   text('Click to restart', width / 2, 400);
+
+  text('score:'+score, width / 2, 430);
 
   fill(0);
   stroke(0);
@@ -243,7 +267,6 @@ function draw() {
 
       // Draw the Score
       draw_text('Score: ' + score, 25, 255, width - 150, height - 25);
-      //draw_text('Laser Shot: ' + laserShot, 20, 'yellow', 10, height - 50);
 
       // Draw the enemies
       for(let i = 0; i < enemies.length; i++) {
@@ -280,6 +303,18 @@ function draw() {
         }
       }
 
+      // detect collision between Player and Enemy
+      for(let i = 0; i < enemies.length; i++) {
+        if (enemies[i] !== undefined && enemies[i].isTouching(player.getBounds())) {
+          player.lives--;
+          enemies.splice(i,1);
+        }
+      }
+
+      if (player.lives == 0) {
+        screen++;
+      }
+
       let create_new_enemy = randInt(1,80);
       if (create_new_enemy == 6) {
         enemies.push(new Enemy());
@@ -310,5 +345,7 @@ function mouseReleased() {
     screen++;
   } else if (screen == 3) {
     screen = 0;
+    player.lives = 3;
+    score = 0;
   }
 }
