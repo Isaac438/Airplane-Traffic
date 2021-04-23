@@ -62,6 +62,8 @@ class Player {
     for (let i = 0; i < this.lives; i++) {
       draw_heart(i * 25 + 5, 5);
     }
+
+    // draw the laser icons
     for (let i = 0; i < this.lasers; i++) {
       fill(0,250,0);
       rect(i * 25 + 5,height - 10, 15, 2);
@@ -347,5 +349,6 @@ function mouseReleased() {
     screen = 0;
     player.lives = 3;
     score = 0;
+    player.lasers = 3;
   }
 }
