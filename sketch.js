@@ -35,6 +35,7 @@ function setup() {
   player = new Player(3, 3, 10);
   enemies = [];
   lasers = [];
+  explosions = [];
 
 }
 
@@ -68,6 +69,14 @@ class Player {
       rect(i * 25 + 5,height - 10, 15, 2);
     }
   }
+
+   getX() {
+     return this.x;
+   }
+
+   getY() {
+     return this.y + (this.h / 2);
+   }
 
 
 }
@@ -119,6 +128,14 @@ class Enemy {
     return { x: this.x - this.w, y: this.y - this.h, w: this.w, h: this.h };
   }
 
+  getX() {
+    return this.x - (this.w / 2);
+  }
+
+  getY() {
+    return this.y - (this.h / 2);
+  }
+
   isTouching(bounds) {
     let b = this.getBounds();
     if(b.y + b.h <= bounds.y || bounds.y + bounds.h <= b.y) {
@@ -138,12 +155,16 @@ class Explosion {
     this.y = y;
     this.size = size;
     this.currentsize = 0;
-    this.color = 'red';
+    this.r = 255 - this.size;
   }
 
   draw() {
-    fill(this.color);
-    circle(this.x, this.y, this.currentsize);
+    if(this.currentsize < this.size) {
+      fill(this.r, 255 - this.r, 0);
+      circle(this.x, this.y, this.currentsize);
+      this.r++;
+      this.currentsize++;
+    }
   }
 }
 
@@ -284,9 +305,9 @@ function draw() {
       for(let i = 0; i < enemies.length; i++) {
         for(let j = 0; j < lasers.length; j++) {
           if (enemies[i] !== undefined && enemies[i].isTouching(lasers[j].getBounds())) {
+            explosions.push(new Explosion(enemies[i].getX(), enemies[i].getY(), 100));
             enemies.splice(i, 1);
             score += 2;
-            player.lasers--;
             lasers.splice(i, 1);
           }
         }
@@ -304,9 +325,16 @@ function draw() {
         }
       }
 
+      // Draw the explosions
+      for (let i = 0; i < explosions.length; i++) {
+        explosions[i].draw();
+      }
+
       // detect collision between Player and Enemy
       for(let i = 0; i < enemies.length; i++) {
         if (enemies[i] !== undefined && enemies[i].isTouching(player.getBounds())) {
+          explosions.push(new Explosion(enemies[i].getX(), enemies[i].getY(), 100));
+          explosions.push(new Explosion(player.getX(),player.getY(), 100));
           player.lives--;
           enemies.splice(i,1);
         }
