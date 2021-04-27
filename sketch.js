@@ -340,11 +340,13 @@ function draw() {
         }
       }
 
+      text(width,25,100,100);
+
       if (player.lives == 0) {
         screen++;
       }
 
-      let create_new_enemy = randInt(1,80);
+      let create_new_enemy = randInt(1,width - (width / 20) * 19);
       if (create_new_enemy == 6) {
         enemies.push(new Enemy());
       }
