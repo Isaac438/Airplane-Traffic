@@ -340,8 +340,6 @@ function draw() {
         }
       }
 
-      text(width,25,100,100);
-
       if (player.lives == 0) {
         screen++;
       }
