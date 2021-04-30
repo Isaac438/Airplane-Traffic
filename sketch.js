@@ -344,7 +344,8 @@ function draw() {
         screen++;
       }
 
-      let create_new_enemy = randInt(1,width - (width / 20) * 19);
+      //  creates the chances of making a new enemy
+      let create_new_enemy = randInt(1,width - (width / 50) * 49);
       if (create_new_enemy == 6) {
         enemies.push(new Enemy());
       }
